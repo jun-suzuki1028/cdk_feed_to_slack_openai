@@ -9,9 +9,6 @@ import boto3
 # タイムゾーンを日本時間に設定
 JST = timezone(timedelta(hours=+9))
 
-# Slack Webhook URL
-WEBHOOK_URL = "https://hooks.slack.com/services/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"  # noqa E501
-
 # OpenAI API モデル名
 OPENAI_MODEL: str = "gpt-3.5-turbo"
 
@@ -79,7 +76,7 @@ def generate_summary(feed) -> str:
     return summary
 
 
-def post_to_slack(message: str, link_url: str, title: str) -> None:
+def post_to_slack(WEBHOOK_URL: str, message: str, link_url: str, title: str) -> None:
     """
     RSSフィードとOpenAIの要約SlackのWebhookURLへPOST
     """
@@ -109,11 +106,12 @@ def post_to_slack(message: str, link_url: str, title: str) -> None:
 def lambda_handler(event, context) -> None:
     # OpenAI API Key取得
     openai.api_key = get_parameter_value("/openai/secret_key")
+    WEBHOOK_URL = get_parameter_value("/slack/feed_openai/webhook")
     # RSSフィードから記事を取得し、要約を生成してSlackに投稿する
     for entry in get_feed_entries():
         summary: str = generate_summary(entry)
 
-        post_to_slack(summary, entry.link, entry.title)
+        post_to_slack(WEBHOOK_URL, summary, entry.link, entry.title)
 
 
 if __name__ == "__main__":

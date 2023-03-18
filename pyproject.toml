@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "openai-slack"
+version = "0.1.0"
+description = ""
+authors = [""]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+feedparser = "^6.0.10"
+openai = "^0.27.2"
+boto3 = "^1.26.94"
+
+[tool.poetry.dev-dependencies]
+black = "^23.1.0"

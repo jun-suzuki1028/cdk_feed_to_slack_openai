@@ -36,10 +36,7 @@ def get_parameter_value(param_key):
     Parameter storeからパラメータを取得
     """
     ssm = boto3.client("ssm")
-    return ssm.get_parameter(
-        Name=param_key,
-        WithDecryption=True
-    )["Parameter"]["Value"]
+    return ssm.get_parameter(Name=param_key, WithDecryption=True)["Parameter"]["Value"]
 
 
 def get_feed_entries() -> List[Dict]:
@@ -51,9 +48,10 @@ def get_feed_entries() -> List[Dict]:
     feed = feedparser.parse(FEED_URL)
     # 更新日時の閾値よりも新しいエントリーのみを取得
     new_entries: List[Dict] = [
-        entry for entry in feed.entries
-        if datetime(*entry.updated_parsed[:6], tzinfo=timezone.utc)
-        .astimezone(JST) > updated_since
+        entry
+        for entry in feed.entries
+        if datetime(*entry.updated_parsed[:6], tzinfo=timezone.utc).astimezone(JST)
+        > updated_since
     ]
 
     return new_entries
